@@ -2,33 +2,35 @@
 #============================== 必要软件检查 ==============================
 # 检测并安装缺失的软件	
 set -e
-PACKAGE_INSTALLER(){
+PACKAGE_INSTALLER()
+{
 
-	local PACKAGE_BOOT_NAME="$1"      # 软件在终端启动时的名称
-	local PACKAGE_DOWNLOAD_NAME="$2"  # 软件在仓库内的下载名称
+	local PACKAGE_NAME="$1"
 
-	if [ "$PACKAGE_BOOT_NAME" = "yay" ] && ! command -v "$PACKAGE_BOOT_NAME" >/dev/null 2>&1;
+	if [ "$PACKAGE_NAME" = "yay" ] && ! pacman -Q "$PACKAGE_NAME" >/dev/null 2>&1;
 	then 
 		# 静默判断传入函数的首个参数是否为 yay 以及是否下载，否则调用pacman命令启动下载
-		printf "\033[31m$PACKAGE_BOOT_NAME 未下载 准备启动下载流程\033[0m\n"
-		sudo pacman -S $PACKAGE_DOWNLOAD_NAME || 
+		printf "\033[31m$PACKAGE_NAME 未下载 准备启动下载流程\033[0m\n"
+		# sudo pacman -Sy $PACKAGE_NAME 非交互环境下自动安装
+		sudo pacman -S $PACKAGE_NAME ||
 			{
-				printf "\033[31m$PACKAGE_DOWNLOAD_NAME 下载失败";
+				printf "\033[31m$PACKAGE_NAME 下载失败";
 				exit 1;
 			}
 	
-	elif [ "$PACKAGE_BOOT_NAME" != "yay" ] && ! command -v "$PACKAGE_BOOT_NAME" >/dev/null 2>&1;
+	elif [ "$PACKAGE_NAME" != "yay" ] && ! pacman -Q "$PACKAGE_NAME" >/dev/null 2>&1;
 	then
 		# 除 yay 外其他软件的下载逻辑
-		printf "\033[31m$PACKAGE_BOOT_NAME 未下载 准备启动下载流程\033[0m\n"
-		yay -S $PACKAGE_DOWNLOAD_NAME ||
+		printf "\033[31m$PACKAGE_NAME 未下载 准备启动下载流程\033[0m\n"
+		# yay --noconfirm -S $PACKAGE_NAME 非交互环境下自动安装
+		yay -S $PACKAGE_NAME ||
 			{ 
-				printf "\033[31m$PACKAGE_DOWNLOAD_NAME 下载失败";
+				printf "\033[31m$PACKAGE_NAME 下载失败";
 				exit 1;
 			}
 
 	else 
-		printf "\033[32m$PACKAGE_BOOT_NAME 已下载 跳过下载执行流程\033[0m\n"
+		printf "\033[32m$PACKAGE_NAME 已下载 跳过下载执行流程\033[0m\n"
 	fi
 
 }
@@ -36,13 +38,17 @@ PACKAGE_INSTALLER(){
 
 
 
-COMPLETE_SOFTWARE_INSTALL(){
-	#SIMPLE_SOFTWARE_INSTALL
+SOFTWARE_CONFIG_SET()
+{
 #============================= 输入法相关设置 =============================
 	
 	# 下载 gtk qt 兼容组件 管理工具 中州韵以及雾凇输入法
-	#yay -S fcitx5-gtk fcitx5-qt fcitx5-configtool fcitx5-rime rime-ice-git
-	printf "[\033[32mOK\033[0m] 下载 fcitx5-gtk等兼容组件、中州韵输入法及组件\n"
+	PACKAGE_INSTALLER fcitx5-gtk
+	PACKAGE_INSTALLER fcitx5-qt
+	PACKAGE_INSTALLER fcitx5-configtool
+	PACKAGE_INSTALLER fcitx5-rime
+	PACKAGE_INSTALLER rime-ice-git
+	printf "[\033[32mOK\033[0m] fcitx5-gtk等兼容组件、中州韵输入法及组件 下载完成\n"
 
 	# 将中州韵设置为默认输入法
 	# touch $HOME/.local/share/fcitx5/rime/default.custom.yaml
@@ -60,6 +66,8 @@ COMPLETE_SOFTWARE_INSTALL(){
 	#echo -e "XMODIFIERS=@im=fcitx\nQT_IM_MODULES=\"wayland;fcitx\"\nQT_IM_MODULE=fcitx\nSDL_IM_MODULE=fcitx" > $HOME/.config/environment.d/ime.conf
 	printf "[\033[32mOK\033[0m] 将输入法兼容选项写入用户环境变量中\n"
 
+	#killall -HUP fcitx5
+
 #============================== GIT相关设置 ==============================
 	printf "[\033[32mOK\033[0m] 设置git名称与邮箱\n"
 	#git config --global user.name "zerones"
@@ -67,7 +75,15 @@ COMPLETE_SOFTWARE_INSTALL(){
 }
 	
 printf "[\033[32mOK\033[0m] 开始安装必要软件\n"
-COMPLETE_SOFTWARE_INSTALL
+
+
+PACKAGE_INSTALLER yay
+PACKAGE_INSTALLER fcitx5
+PACKAGE_INSTALLER git
+PACKAGE_INSTALLER clash-verge-rev-bin
+
+SOFTWARE_CONFIG_SET
+
 printf "[\033[32mOK\033[0m] 检查完成，即将运行滚动更新命令，命令完成后脚本会退出\n"
 
 
