@@ -1,6 +1,7 @@
 # !/bin/bash
 # Latest Coding Time : 2026/9/18
 # 此脚本用于安装 CachyOs 系统后进行基本配置优化
+set -e
 
 #==================== 检查系统信息 ====================
 # 检查 /etc/os-release 文件并读取系统信息
@@ -31,17 +32,24 @@ if [ "$OFFICIAL_REPOSITORY_CHOICE" = "Y" ] || [ "$OFFICIAL_REPOSITORY_CHOICE" = 
 then
 	printf "[\033[32mOK\033[0m] 设置官方仓库\n"
 	
-	cd $HOME && mkdir TempDir && cd TempDir
+	mkdir "$HOME/TempDir" && cd "$HOME/TempDir"
 	printf "[\033[32mOK\033[0m] 成功生成临时文件夹\n"
 	
-	curl -O https://mirror.cachyos.org/cachyos-repo.tar.xz
+	curl -O https://mirror.cachyos.org/cachyos-repo.tar.xz ||
+		{
+			printf "[\033[31m仓库压缩包下载失败"
+			exit 1
+		}
 	tar xvf cachyos-repo.tar.xz && cd cachyos-repo 
 	printf "[\033[32mOK\033[0m] 已解压压缩包 准备运行脚本\n"
 	
-	#sudo ./cachyos-repo.sh
+	sudo ./cachyos-repo.sh ||
+		{
+			rm -r "$HOME/TempDir"
+		}
 	printf "[\033[32mOK\033[0m] 官方脚本运行完成 准备清理临时文件夹\n"
 	
-	cd $HOME && rm -r TempDir
+	cd $HOME && rm -r "TempDir"
 	printf "[\033[32mOK\033[0m] 官方仓库设置成功\n"
 else
 	printf "[\033[32mOK\033[0m] 跳过执行官方仓库设置\n"
