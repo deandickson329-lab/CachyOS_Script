@@ -1,0 +1,2 @@
+# CachyOS_Script
+安装CachyOS系统后用于设置系统参数和下载软件的脚本
