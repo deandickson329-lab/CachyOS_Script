@@ -26,9 +26,9 @@ fi
 #==================== 官方仓库设置 ==========================
 # 用于自动化检测CPU架构并配置最优化的软件仓库
 
-read -p "步骤1 -> 设置 cachyos-repo 仓库 [Y/n] " OFFICIAL_REPOSITORY_CHOICE
+printf "[\033[36mSTEP\033[0m] 设置CachyOs-Repo仓库[y/n] =>" && read -p "" OFFICIAL_REPOSITORY_CHOICE
 
-if [ "$OFFICIAL_REPOSITORY_CHOICE" = "Y" ] || [ "$OFFICIAL_REPOSITORY_CHOICE" = "y" ] || [ "$OFFICIAL_REPOSITORY_CHOICE" = "" ];
+if [ "$OFFICIAL_REPOSITORY_CHOICE" = "y" ] || [ "$OFFICIAL_REPOSITORY_CHOICE" = "" ];
 then
 	printf "[\033[32mOK\033[0m] 设置官方仓库\n"
 	
@@ -58,8 +58,9 @@ fi
 #==================== 去除启动报错 ==========================
 # 消除开关机提示 Failed to start Virtual Console Setup 避免影响启动速度
 
-read -p "步骤2 -> 去除启动报错 (Failed to start Virtual Console Setup) [Y/n] " START_ERROR_CHOICE
-if [ "$START_ERROR_CHOICE" = "Y" ] || [ "$START_ERROR_CHOICE" = "y" ] || [ "$START_ERROR_CHOICE" = "" ];
+
+printf "[\033[36mSTEP\033[0m] 去除启动报错（Failed to stat Virtual Console Setup）[y/n] =>" && read -p "" START_ERROR_CHOICE
+if [ "$START_ERROR_CHOICE" = "y" ] || [ "$START_ERROR_CHOICE" = "" ];
 then
 	sudo sed -i -E 's/KEYMAP=.*/KEYMAP=us/g' /etc/vconsole.conf
 	printf "[\033[32mOK\033[0m] 修改 /etc/vconsole.conf 文件完成\n"

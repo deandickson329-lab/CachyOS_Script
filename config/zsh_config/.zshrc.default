@@ -1,0 +1,86 @@
+# /usr/bin/zsh
+# 用于zsh的配置
+
+#==============================
+#提示符配置
+#==============================
+
+PROMPT="%F{39}%n@%m%f%F{8}[%D{%H:%M:%S}]%f %F{208}%~%f
+%# "
+
+
+#==============================
+#历史配置
+#==============================
+
+HISTFILE=~/.zsh_history   # 历史命令文件路径
+HISTSIZE=2000		  # 内存中历史命令条数
+SAVEHIST=5000		  # 文件中历史命令条数
+
+# 历史文件保存配置
+setopt HIST_IGNORE_DUPS   # 忽略重复命令 
+setopt HIST_SAVE_NO_DUPS  # 保存时去重
+#setopt EXTENED_HISTORY	  # 启用时间戳
+
+
+#==============================
+#杂项设置
+#==============================
+
+fpath=(~/.zsh/completion $fpath)    # 设置补全目录
+autoload -Uz compinit               # 启用补全功能
+compinit -i
+
+zstyle ':completion:*' menu select  # 补全菜单支持方向键
+zstyle ':completion:*' verbose yes  # 补全菜单支持方向键
+
+
+
+#==============================
+#键位绑定
+#==============================
+
+bindkey -e
+
+# HOME：跳至行首
+bindkey '^[[H' beginning-of-line  # zsh 原生序列
+bindkey '^[[1~' beginning-of-line # Alacritty 等终端的序列
+bindkey '^[OH' beginning-of-line  # Konsole 等终端的序列
+
+# END：跳至行尾
+bindkey '^[[F' end-of-line        # zsh 原生序列
+bindkey '^[[4~' end-of-line       # Alacritty 等终端的序列
+bindkey '^[OF' end-of-line        # Konsole 等终端的序列
+
+# Ctrl + Left：向左跳跃一个单词
+bindkey '^[[1;5D' backward-word   # zsh 原生序列
+bindkey '^[^[[D' backward-word    # Alacritty 等终端的序列
+
+# Ctrl + right：向右跳跃一个单词
+bindkey '^[[1;5C' forward-word    # zsh 原生序列
+bindkey '^[^[[C' forward-word     # Alacritty 等终端的序列
+
+
+#==============================
+#命令别名
+#==============================
+
+alias ls='ls -a --color=auto'
+alias ll='ls -la --color=auto'
+alias vim='nvim'
+alias ..='cd ..'
+
+#==============================
+#插件加载
+#==============================
+
+# 自动建议
+# zsh-autosuggestions
+
+# 历史字串搜索
+# zsh-history-substring-search
+
+# 语法高亮实时显示错误(必须在最后)
+# zsh-syntax-highlighting
+
+
